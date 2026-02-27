@@ -3,140 +3,168 @@ from flask_cors import CORS
 import requests
 from recommendation_model import recommend_top_jobs
 
-
 app = Flask(__name__)
 CORS(app)
 
 # 🔑 Adzuna API credentials
-ADZUNA_API_URL = "https://api.adzuna.com/v1/api/jobs/in/search/1"
-APP_ID = "API_ID"
-APP_KEY = "API_KEY"
+APP_ID = "App_ID"
+APP_KEY = "App_Key"
+
+# 🌍 India is the fixed country code for Adzuna
+COUNTRY = "in"
+ADZUNA_BASE_URL = f"https://api.adzuna.com/v1/api/jobs/{COUNTRY}/search"
+
+# Adzuna max 50 results per page — we fetch 2 pages = 100 results
+RESULTS_PER_PAGE = 50
+TOTAL_PAGES = 2
+
+
+def build_what_query(q, skills, search_mode):
+    """
+    Build a minimal, effective Adzuna 'what' query.
+
+    ⚠️  IMPORTANT: Adzuna's 'what' is AND-matched — every word must appear
+    in the listing. Adding too many words (skills + role + intern keywords)
+    causes near-zero results. Keep it short and targeted.
+
+    Strategy:
+      - Internship mode : "{role} intern"  (e.g. "software intern")
+                          fallback: "intern" alone — broadest possible
+      - Job mode        : "{role}"  (e.g. "software engineer")
+                          fallback: "jobs"
+
+    Skills are intentionally NOT included here — they are used only by
+    the TF-IDF recommender model for ranking, not for Adzuna filtering.
+    """
+    if search_mode == "internship":
+        if q:
+            return f"{q.strip()} intern"
+        return "intern"   # broadest internship search — always returns results
+    else:
+        if q:
+            return q.strip()
+        return "jobs"
+
+
+def fetch_adzuna_jobs(params):
+    """
+    Fetch jobs from Adzuna across multiple pages and merge results.
+    NOTE: contract_time is intentionally NOT passed to Adzuna because
+    most Indian job listings don't have this field populated — passing it
+    causes near-zero results. Instead, it is used as a scoring signal in
+    the recommendation model.
+    """
+    all_jobs = []
+    for page in range(1, TOTAL_PAGES + 1):
+        url = f"{ADZUNA_BASE_URL}/{page}"
+        try:
+            res = requests.get(
+                url,
+                params={**params, "results_per_page": RESULTS_PER_PAGE},
+                timeout=10,
+            )
+            res.raise_for_status()
+            data = res.json()
+            page_jobs = data.get("results", [])
+            all_jobs.extend(page_jobs)
+            print(f"  📄 Page {page}: {len(page_jobs)} jobs fetched")
+            if len(page_jobs) < RESULTS_PER_PAGE:
+                break  # No more pages available
+        except Exception as e:
+            print(f"  ❌ Error fetching page {page}: {e}")
+            break
+    return all_jobs
 
 
 @app.route("/")
 def home():
-    return "✅ Flask backend running"
-
-
-@app.route("/api/jobs", methods=["GET"])
-def get_jobs():
-    """Fetch jobs from Adzuna API"""
-    print("✅ /api/jobs route hit!")
-
-    q = request.args.get("q", "")
-    location = request.args.get("location", "")
-    country = request.args.get("country", "in")
-    max_results = int(request.args.get("max_results", 300))
-
-    # Extra params (not used by Adzuna, but you may store for filtering later)
-    education = request.args.get("education", "")
-    skills = request.args.get("skills", "")
-    stipend = request.args.get("stipend", "")
-    mode = request.args.get("mode", "")
-    duration = request.args.get("duration", "")
-    sector = request.args.get("sector", "")
-    job_type = request.args.get("job_type", "")
-
-    # Construct Adzuna API URL dynamically with country
-    api_url = f"https://api.adzuna.com/v1/api/jobs/{country}/search/1"
-
-    params = {
-        "app_id": APP_ID,
-        "app_key": APP_KEY,
-        "results_per_page": max_results,
-        "what": q or sector,
-        "where": location,
-    }
-
-    try:
-        res = requests.get(api_url, params=params)
-        res.raise_for_status()
-        data = res.json()
-
-        print(f"✅ {len(data.get('results', []))} jobs fetched successfully")
-
-        return jsonify({
-            "success": True,
-            "results": data.get("results", []),
-            "filters": {
-                "education": education,
-                "skills": skills,
-                "stipend": stipend,
-                "mode": mode,
-                "duration": duration,
-                "sector": sector,
-                "job_type": job_type,
-            }
-        })
-
-    except Exception as e:
-        print("❌ Error fetching jobs:", e)
-        return jsonify({"success": False, "error": str(e)})
+    return "✅ Flask backend running – Internship Recommender API (India only)"
 
 
 @app.route("/api/recommendations", methods=["GET"])
 def get_recommendations():
-    """Fetch jobs and then generate recommendations"""
-    q = request.args.get("q", "")
-    location = request.args.get("location", "")
-    education = request.args.get("education", "")
-    skills = request.args.get("skills", "")
-    stipend = request.args.get("stipend", "")
-    mode = request.args.get("mode", "")  # full_time / part_time
-    duration = request.args.get("duration", "")
-    sector = request.args.get("sector", "")
-    country = request.args.get("country", "in")
-    max_results = int(request.args.get("max_results", 30))
+    """
+    Fetch jobs from Adzuna (India only) and return AI-ranked recommendations.
 
-    api_url = f"https://api.adzuna.com/v1/api/jobs/{country}/search/1"
+    Adzuna parameters actually used (only ones that work reliably for India):
+      - what      : role query + internship keywords (if internship mode) + skills
+      - where     : city / region in India
+      - category  : Adzuna sector tag  (e.g. 'it-jobs')
+      - salary_min: minimum annual salary
 
-    params = {
-        "app_id": APP_ID,
+    Note: contract_time is NOT sent to Adzuna — it is used only for scoring
+    because most Indian listings lack this field and the filter returns empty results.
+    """
+
+    # --- Read user inputs ---
+    q             = request.args.get("q", "").strip()
+    location      = request.args.get("location", "").strip()
+    skills        = request.args.get("skills", "").strip()
+    contract_time = request.args.get("contract_time", "").strip()   # full_time / part_time
+    category      = request.args.get("category", "").strip()        # Adzuna category tag
+    salary_min    = request.args.get("salary_min", "").strip()
+    search_mode   = request.args.get("search_mode", "internship").strip()  # internship / job
+
+    print(f"\n🔍 Recommendation request:")
+    print(f"   search_mode={search_mode!r}, q={q!r}, location={location!r}")
+    print(f"   skills={skills!r}, contract_time={contract_time!r}")
+    print(f"   category={category!r}, salary_min={salary_min!r}")
+
+    # --- Build Adzuna params (only params Adzuna actually uses for India) ---
+    adzuna_params = {
+        "app_id":  APP_ID,
         "app_key": APP_KEY,
-        "results_per_page": max_results,
-        "what": q or sector,
-        "where": location,
+        "what":    build_what_query(q, skills, search_mode),
     }
 
-    try:
-        res = requests.get(api_url, params=params)
-        res.raise_for_status()
-        jobs_data = res.json().get("results", [])
+    if location:
+        adzuna_params["where"] = location
 
-        # 🔥 HARD FILTER BY MODE (CRITICAL FIX)
-        if mode:
-            jobs_data = [
-                job for job in jobs_data
-                if job.get("contract_time") == mode
-            ]
+    if category:
+        adzuna_params["category"] = category
 
-        print(f"✅ Jobs after mode filter ({mode}): {len(jobs_data)}")
+    if salary_min:
+        try:
+            adzuna_params["salary_min"] = int(float(salary_min))
+        except ValueError:
+            pass  # Ignore invalid salary input
 
-        user_profile = {
-            "skills": skills,
-            "education": education,
-            "location": location,
-            "stipend": stipend,
-            "mode": mode,
-            "duration": duration,
-            "sector": sector,
-        }
+    # contract_time intentionally omitted from Adzuna params — see docstring above
 
-        recommended_jobs = recommend_top_jobs(
-            user_profile,
-            jobs_data,
-            top_n=5
-        )
+    print(f"   Adzuna what query: {adzuna_params['what']!r}")
+    print(f"   Adzuna params (excl. keys): { {k: v for k, v in adzuna_params.items() if k not in ('app_id', 'app_key')} }")
 
+    # --- Fetch up to 100 jobs from India ---
+    jobs_data = fetch_adzuna_jobs(adzuna_params)
+    print(f"✅ Total jobs fetched: {len(jobs_data)}")
+
+    if not jobs_data:
         return jsonify({
-            "success": True,
-            "results": recommended_jobs
+            "success": False,
+            "error": "No jobs returned from Adzuna. Try broadening your search.",
         })
 
-    except Exception as e:
-        print("❌ Error:", e)
-        return jsonify({"success": False, "error": str(e)})
+    # --- Build user profile for the recommender ---
+    user_profile = {
+        "query":         q,
+        "skills":        skills,
+        "location":      location,
+        "contract_time": contract_time,   # used for scoring boost only
+        "category":      category,
+        "salary_min":    salary_min,
+        "search_mode":   search_mode,
+    }
 
+    # --- Run recommendation model (returns top 10) ---
+    recommended_jobs = recommend_top_jobs(user_profile, jobs_data, top_n=10)
+
+    print(f"🎯 Returning {len(recommended_jobs)} recommendations")
+
+    return jsonify({
+        "success": True,
+        "total_fetched": len(jobs_data),
+        "results": recommended_jobs,
+    })
 
 
 if __name__ == "__main__":
