@@ -1,64 +1,64 @@
 ============================================================
-Recommendation Run: 2026-02-27 21:23:34.680385
-User Profile: {'query': 'software', 'skills': 'Python, Django', 'location': 'Chennai', 'contract_time': '', 'category': 'it-jobs', 'salary_min': '', 'search_mode': 'internship'}
+Recommendation Run: 2026-02-28 12:22:06.242640
+User Profile: {'query': 'Java Developer', 'skills': 'Java,SpringBoot', 'location': 'Bengaluru', 'contract_time': '', 'category': '', 'salary_min': '300000', 'search_mode': 'job'}
 
-1. Software Development Engineer (Backend) - Internship
-   Company : Clear Demand Inc
-   Location: Chennai, Tamil Nadu
-   Salary  : None – None
-   URL     : https://www.adzuna.in/details/5482297697?utm_medium=api&utm_source=a154d375
+1. Java Developer
+   Company : Epic.one
+   Location: Bangalore, Karnataka
+   Salary  : 800000 – 2000000
+   URL     : https://www.adzuna.in/details/1205877335?utm_medium=api&utm_source=a154d375
 
-2. Software Developer Intern
-   Company : SynqCloud, Inc
-   Location: Chennai, Tamil Nadu
-   Salary  : None – None
-   URL     : https://www.adzuna.in/details/1155089572?utm_medium=api&utm_source=a154d375
+2. Java Developer
+   Company : Mount Talent Consulting
+   Location: Bangalore, Karnataka
+   Salary  : 200000 – 600000
+   URL     : https://www.adzuna.in/details/3332673293?utm_medium=api&utm_source=a154d375
 
-3. Software Developer Full-Time/Intern
-   Company : ColumbusAgain Software Technologies
-   Location: Chennai, Tamil Nadu
-   Salary  : None – None
-   URL     : https://www.adzuna.in/details/4801425347?utm_medium=api&utm_source=a154d375
+3. Java Developer
+   Company : Amagi Media Labs
+   Location: Bangalore, Karnataka
+   Salary  : 400000 – 1500000
+   URL     : https://www.adzuna.in/details/3576197664?utm_medium=api&utm_source=a154d375
 
-4. Software Development Engineer, AFT External Fulfillment (Luxembourg)
-   Company : Amazon
-   Location: Chennai, Tamil Nadu
-   Salary  : None – None
-   URL     : https://www.adzuna.in/details/3187994643?utm_medium=api&utm_source=a154d375
+4. Java Developer
+   Company : Synechron
+   Location: Bangalore, Karnataka
+   Salary  : 200000 – 1500000
+   URL     : https://www.adzuna.in/details/4080470068?utm_medium=api&utm_source=a154d375
 
-5. Intern – Software Engineering
-   Company : Kaleris
-   Location: Chennai, Tamil Nadu
-   Salary  : None – None
-   URL     : https://www.adzuna.in/details/5624264191?utm_medium=api&utm_source=a154d375
+5. Java Developer
+   Company : Mazenet solution
+   Location: Bangalore, Karnataka
+   Salary  : 200000 – 1600000
+   URL     : https://www.adzuna.in/details/5503863523?utm_medium=api&utm_source=a154d375
 
-6. Software Development Engineer, Amazon Fulfillment Technology (Luxembourg)
-   Company : Amazon
-   Location: Chennai, Tamil Nadu
-   Salary  : None – None
-   URL     : https://www.adzuna.in/details/3187994465?utm_medium=api&utm_source=a154d375
+6. Java Developer
+   Company : Fernlink Technologies Pvt Ltd
+   Location: Bangalore, Karnataka
+   Salary  : 200000 – 600000
+   URL     : https://www.adzuna.in/details/1171507983?utm_medium=api&utm_source=a154d375
 
-7. 2025-D-0052 Software Developer Intern
-   Company : Invidi Technologies Corporation
-   Location: Ekkaduthangal, Chennai
-   Salary  : None – None
-   URL     : https://www.adzuna.in/details/5384753719?utm_medium=api&utm_source=a154d375
+7. Java Developer
+   Company : Minebrat Private Limited
+   Location: Bangalore, Karnataka
+   Salary  : 200000 – 700000
+   URL     : https://www.adzuna.in/details/1222340726?utm_medium=api&utm_source=a154d375
 
-8. Software Development Engineer - Test II, Alexa Endpoint Experiences
-   Company : Amazon
-   Location: Chennai, Tamil Nadu
-   Salary  : None – None
-   URL     : https://www.adzuna.in/details/5637668559?utm_medium=api&utm_source=a154d375
+8. Java Developer
+   Company : Legasis Services Pvt. Ltd.
+   Location: Bangalore, Karnataka
+   Salary  : 300000 – 500000
+   URL     : https://www.adzuna.in/details/1318783121?utm_medium=api&utm_source=a154d375
 
-9. Software Intern
-   Company : NSQTech Private Limited
-   Location: Chennai, Tamil Nadu
-   Salary  : 60000 – 60000
-   URL     : https://www.adzuna.in/details/5572691181?utm_medium=api&utm_source=a154d375
+9. Java Developer
+   Company : Mobiezy
+   Location: Bangalore, Karnataka
+   Salary  : 0 – 1500000
+   URL     : https://www.adzuna.in/details/2702740940?utm_medium=api&utm_source=a154d375
 
-10. Software Development Engineer II, Amazon
-   Company : Amazon
-   Location: Chennai, Tamil Nadu
-   Salary  : None – None
-   URL     : https://www.adzuna.in/details/5618078054?utm_medium=api&utm_source=a154d375
+10. Java Developer
+   Company : Zerozilla Infotech Pvt Ltd
+   Location: Bangalore, Karnataka
+   Salary  : 300000 – 1800000
+   URL     : https://www.adzuna.in/details/4250934943?utm_medium=api&utm_source=a154d375
 

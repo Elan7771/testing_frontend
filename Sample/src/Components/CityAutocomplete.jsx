@@ -4,7 +4,7 @@
 
 import { useState, useRef, useEffect } from "react";
 
-const RAPIDAPI_KEY = "CITY_KEY";
+const RAPIDAPI_KEY = "API_KEY";
 const RAPIDAPI_HOST = "wft-geo-db.p.rapidapi.com";
 
 function CityAutocomplete({ value, onChange }) {

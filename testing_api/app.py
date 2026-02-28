@@ -7,8 +7,8 @@ app = Flask(__name__)
 CORS(app)
 
 # 🔑 Adzuna API credentials
-APP_ID = "App_ID"
-APP_KEY = "App_Key"
+APP_ID = "API_ID"
+APP_KEY = "API_KEY"
 
 # 🌍 India is the fixed country code for Adzuna
 COUNTRY = "in"
