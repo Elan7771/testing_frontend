@@ -23,7 +23,7 @@ STRICT RULES:
 - Always encourage the user to use the search form with specific parameters when relevant.
 - When suggesting form values, format them clearly with labels like: Role: "Data Science Intern", Location: "Bangalore", Skills: "Python, ML", Sector: "Data & Analytics".`;
 
-function AiChatbot() {
+function AIChatbot() {
     const [open, setOpen] = useState(false);
     const [messages, setMessages] = useState([
         {
@@ -222,4 +222,4 @@ function AiChatbot() {
     );
 }
 
-export default AiChatbot;
+export default AIChatbot;
