@@ -7,7 +7,7 @@ import Header from "./Components/Header";
 import SearchForm from "./Components/SearchForm";
 import JobCard from "./Components/JobCard";
 import SearchHistory from "./Components/SearchHistory";
-import AiChatbot from "./Components/AiChatbot";
+import AiChatbot from "./Components/AIChatbot";
 
 const BACKEND_URL = "http://localhost:8080";
 
